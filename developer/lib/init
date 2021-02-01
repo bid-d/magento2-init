@@ -11,6 +11,8 @@ mv developer/docker-compose.dev.yml docker-compose.yml
 rm -rf .git
 
 # Setup
+source developer/env/magento.env
+
 while getopts d:v: OPTION
 do
     case ${OPTION} in
@@ -27,8 +29,6 @@ do
     esac
 done
 
-source developer/env/magento.env
-
-bin/setup
+source bin/setup
 
 git init
