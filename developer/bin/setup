@@ -27,8 +27,8 @@ echo "127.0.0.1"$'\t'"$BASE_URL" | sudo tee -a /etc/hosts
 echo "CREATE DATABASE IF NOT EXISTS \`${MYSQL_DATABASE}\`;FLUSH PRIVILEGES; \
 CREATE USER '${MYSQL_USER}'@'%' IDENTIFIED BY '${MYSQL_PASSWORD}'; \
 GRANT ALL ON ${MYSQL_DATABASE}.* TO '${MYSQL_USER}'@'%';" > init.sql
-bin/clinottymysql mysql -u root -p ${MYSQL_ROOT_PASSWORD} < init.sql
-rm sql.init
+bin/clinottymysql mysql -u root < init.sql
+rm init.sql
 
 # Install magento2
 echo "Installing magento2 ..."
