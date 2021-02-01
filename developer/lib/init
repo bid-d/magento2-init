@@ -14,7 +14,7 @@ rm -rf .git
 
 # Setup
 source developer/env/magento.env
-
+source .env
 while getopts d:v: OPTION
 do
     case ${OPTION} in

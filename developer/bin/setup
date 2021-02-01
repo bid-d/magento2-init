@@ -36,10 +36,10 @@ echo "127.0.0.1"$'\t'"$BASE_URL" | sudo tee -a /etc/hosts
 # Init DB
 
 # Add root user to container so that we can call command without having to login
-bin/clinottymysql echo "[mysql] "$'\n'"user = root "$'\n'"password = $MYSQL_ROOT_PASSWORD" > .my.cnf
+bin/clinottymysql echo "[mysql] "$'\n'"user = root "$'\n'"password = ${MYSQL_ROOT_PASSWORD}" > .my.cnf
 docker cp .my.cnf $(docker-compose ps -q mysql|awk '{print $1}'):/root/.my.cnf
 bin/clinottymysql chmod 600 /root/.my.cnf
-rm .my.conf
+rm .my.cnf
 
 echo "CREATE DATABASE IF NOT EXISTS \`${MYSQL_DATABASE}\`;FLUSH PRIVILEGES; \
 CREATE USER '${MYSQL_USER}'@'%' IDENTIFIED BY '${MYSQL_PASSWORD}'; \
