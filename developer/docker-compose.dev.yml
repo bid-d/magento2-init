@@ -30,11 +30,7 @@ services:
 
   # DB Container using mysql
   mysql:
-    build:
-      context: ./developer/images/mysql
-      args:
-        MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-    image: biddd/mysql:5.7
+    image: mysql:5.7
     restart: always
     command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
     volumes:

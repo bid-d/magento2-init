@@ -34,6 +34,13 @@ echo "Your system password has been requested to add an entry to /etc/hosts..."
 echo "127.0.0.1"$'\t'"$BASE_URL" | sudo tee -a /etc/hosts
 
 # Init DB
+
+# Add root user to container so that we can call command without having to login
+bin/clinottymysql echo "[mysql] "$'\n'"user = root "$'\n'"password = $MYSQL_ROOT_PASSWORD" > .my.cnf
+docker cp .my.cnf $(docker-compose ps -q mysql|awk '{print $1}'):/root/.my.cnf
+bin/clinottymysql chmod 600 /root/.my.cnf
+rm .my.conf
+
 echo "CREATE DATABASE IF NOT EXISTS \`${MYSQL_DATABASE}\`;FLUSH PRIVILEGES; \
 CREATE USER '${MYSQL_USER}'@'%' IDENTIFIED BY '${MYSQL_PASSWORD}'; \
 GRANT ALL ON ${MYSQL_DATABASE}.* TO '${MYSQL_USER}'@'%';" > init.sql
@@ -87,8 +94,10 @@ bin/clinotty bin/magento indexer:reindex
 echo "Flushing cache ..."
 bin/clinotty bin/magento cache:flush
 
+echo "Initializing repository ..."
+git init
+
 echo "Your local environment setup complete"
 echo "Please visit your site at https://${BASE_URL}/"
 
-git init
-echo "Initialized repository, exiting setup, bye bye ..."
+
