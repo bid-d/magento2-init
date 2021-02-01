@@ -24,7 +24,7 @@ services:
     working_dir: /var/www/html/magento
     volumes:
       - ./:/var/www/html/magento
-      - ./developer/images/nginx/magento.conf:/etc/nginx/conf.d/magento.conf
+      - ./developer/images/nginx/magento.conf:/etc/nginx/conf.d/default.conf
     expose:
       - "80"
 

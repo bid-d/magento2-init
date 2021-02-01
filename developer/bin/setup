@@ -89,3 +89,6 @@ bin/clinotty bin/magento cache:flush
 
 echo "Your local environment setup complete"
 echo "Please visit your site at https://${BASE_URL}/"
+
+git init
+echo "Initialized repository, exiting setup, bye bye ..."
