@@ -1,0 +1,30 @@
+#!/bin/bash
+source developer/env/magento.env
+
+while getopts d:v: OPTION
+do
+    case ${OPTION} in
+        d)
+            DOMAIN="${OPTARG}"
+            ;;
+        v)
+            VERSION="${OPTARG}"
+            ;;
+        ?)
+            echo "Invalid option." >&2
+            exit 1
+            ;;
+    esac
+done
+
+git init -qqq
+git remote add origin https://github.com/bid-d/magento2-init.git
+git fetch origin -qqq
+git checkout origin/master -- developer
+mv developer/bin ./
+mv developer/.gitignore.example .gitignore
+mv developer/docker-compose.dev.yml docker-compose.yml
+# mv compose/.vscode ./
+rm -rf .git
+bin/setup
+git init

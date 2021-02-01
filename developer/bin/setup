@@ -1,26 +1,7 @@
 #!/bin/bash
 
-source env/magento.env
-
-while getopts d:v: OPTION
-do
-    case ${OPTION} in
-        d)
-            DOMAIN="${OPTARG}"
-            ;;
-        v)
-            VERSION="${OPTARG}"
-            ;;
-        ?)
-            echo "Invalid option." >&2
-            exit 1
-            ;;
-    esac
-done
-
 # Startup all containers
-cp docker-compose.dev.yml ../docker-compose.yml
-docker-compose -f ../docker-compose.yml up -d
+docker-compose -f docker-compose.yml up -d
 [ "${?}" != 0 ] && echo "Failed to start docker containers" && exit 1
 sleep 5 # Wait for all containers to start
 
@@ -32,9 +13,11 @@ bin/clinotty cp -a src/. ./
 bin/clinotty rm -rf src
 
 # Setup permission
+bin/clinotty chmod u+x bin/magento
+
 bin/clinotty find var generated vendor pub/static pub/media app/etc -type f -exec chmod g+w {} + \
     && find var generated vendor pub/static pub/media app/etc -type d -exec chmod g+ws {} + \
-    && chown -R :www-data $(ls -Ideveloper)
+    && chown -R :www-data $(ls -Ideveloper -Ibin)
 
 # Add baseurl to hosts file
 echo "Your system password has been requested to add an entry to /etc/hosts..."

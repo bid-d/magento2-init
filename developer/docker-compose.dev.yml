@@ -6,6 +6,7 @@ services:
   php:
     build:
       context: ./developer/images/php
+    image: biddd/php-fpm:7.3
     restart: always
     working_dir: /var/www/html/magento
     volumes:
@@ -16,7 +17,7 @@ services:
   # Nginx container as Reverse proxy
   nginx:
     restart: always
-    image: nginx:latest
+    image: nginx:1.19.6
     working_dir: /var/www/html/magento
     volumes:
       - ./:/var/www/html/magento
@@ -26,13 +27,19 @@ services:
 
   # DB Container using mysql
   mysql:
+    build:
+      context: ./developer/images/mysql
+      args:
+        MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+    image: biddd/mysql:5.7
     restart: always
-    image: mysql:5.7
     command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
     volumes:
       - db_data:/var/lib/mysql
-    environment:
-      MYSQL_ROOT_PASSWORD: root
+    env_file:
+      - developer/env/.env
+    environment: 
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
     expose:
       - "3306"
   
@@ -76,5 +83,5 @@ services:
     ports:
       - "80:80"
       - "443:443"
-  volumes:
-    db_data:
+volumes:
+  db_data:

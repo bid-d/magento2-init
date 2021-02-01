@@ -70,3 +70,4 @@ atlassian*
 .DS_Store
 /dev/docker/data/*
 docker-compose.yml
+developer/*
