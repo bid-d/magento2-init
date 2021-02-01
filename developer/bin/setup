@@ -1,0 +1,98 @@
+#!/bin/bash
+
+source env/magento.env
+
+while getopts d:v: OPTION
+do
+    case ${OPTION} in
+        d)
+            DOMAIN="${OPTARG}"
+            ;;
+        v)
+            VERSION="${OPTARG}"
+            ;;
+        ?)
+            echo "Invalid option." >&2
+            exit 1
+            ;;
+    esac
+done
+
+# Startup all containers
+cp docker-compose.dev.yml ../docker-compose.yml
+docker-compose -f ../docker-compose.yml up -d
+[ "${?}" != 0 ] && echo "Failed to start docker containers" && exit 1
+sleep 5 # Wait for all containers to start
+
+# Download magento 2 source code
+echo "Getting magento 2 source code by composer ..."
+sleep 5
+bin/clinotty composer create-project --repository=https://repo.magento.com/ --ignore-platform-reqs magento/project-community-edition=${VERSION} src
+bin/clinotty cp -a src/. ./
+bin/clinotty rm -rf src
+
+# Setup permission
+bin/clinotty find var generated vendor pub/static pub/media app/etc -type f -exec chmod g+w {} + \
+    && find var generated vendor pub/static pub/media app/etc -type d -exec chmod g+ws {} + \
+    && chown -R :www-data $(ls -Ideveloper)
+
+# Add baseurl to hosts file
+echo "Your system password has been requested to add an entry to /etc/hosts..."
+echo "127.0.0.1"$'\t'"$BASE_URL" | sudo tee -a /etc/hosts
+
+# Init DB
+echo "CREATE DATABASE IF NOT EXISTS \`${MYSQL_DATABASE}\`;FLUSH PRIVILEGES; \
+CREATE USER '${MYSQL_USER}'@'%' IDENTIFIED BY '${MYSQL_PASSWORD}'; \
+GRANT ALL ON ${MYSQL_DATABASE}.* TO '${MYSQL_USER}'@'%';" > init.sql
+bin/clinottymysql mysql -u root -p ${MYSQL_ROOT_PASSWORD} < init.sql
+rm sql.init
+
+# Install magento2
+echo "Installing magento2 ..."
+sleep 5
+bin/clinotty php bin/magento setup:install \
+    --base-url=https://${BASE_URL}/ \
+    --base-url-secure=https://${BASE_URL}/ \
+    --db-host=${MYSQL_HOST} \
+    --db-name=${MYSQL_DATABASE} \
+    --db-user=${MYSQL_USER} \
+    --db-password=${MYSQL_PASSWORD} \
+    --backend-frontname=admin \
+    --admin-firstname=${ADMIN_FIRSTNAME} \
+    --admin-lastname=${ADMIN_LASTNAME} \
+    --admin-email=${ADMIN_EMAIL} \
+    --admin-user=${ADMIN_USER} \
+    --admin-password=${ADMIN_PASSWORD} \
+    --language=en_US \
+    --currency=USD \
+    --timezone=America/Chicago \
+    --use-rewrites=1 \
+    --cache-backend=redis \
+    --cache-backend-redis-server=${REDIS_HOST} \
+    --cache-backend-redis-db=0 \
+    --page-cache=redis \
+    --page-cache-redis-server=${REDIS_HOST} \
+    --page-cache-redis-db=1 \
+    --session-save=redis \
+    --session-save-redis-host=${REDIS_HOST} \
+    --session-save-redis-log-level=4 \
+    --session-save-redis-db=2
+    --elasticsearch-host=${ELASTICSEARCH_HOST} \
+    --elasticsearch-port=${ELASTICSEARCH_PORT}
+
+echo "Turning on developer mode ..."
+bin/clinotty bin/magento deploy:mode:set developer
+
+bin/clinotty bin/magento indexer:reindex
+
+echo "Deploying static content ..."
+bin/clinotty bin/magento setup:static-content:deploy -f
+
+echo "Re-indexing with Elasticsearch ..."
+bin/clinotty bin/magento indexer:reindex
+
+echo "Flushing cache ..."
+bin/clinotty bin/magento cache:flush
+
+echo "Your local environment setup complete"
+echo "Please visit your site at https://${BASE_URL}/"
