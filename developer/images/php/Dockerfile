@@ -30,7 +30,7 @@ RUN useradd -m -s /bin/bash magento \
 
 RUN cp "$PHP_INI_DIR/php.ini-development" "$PHP_INI_DIR/php.ini"
 
-COPY ./auth.json /home/magento/.composer/auth.json
+RUN mkdir /home/magento/.composer && chown -R magento:magento /home/magento/.composer/
 
 COPY ./php-custom.ini $PHP_INI_DIR/conf.d/
 

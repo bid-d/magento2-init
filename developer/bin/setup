@@ -1,5 +1,15 @@
 #!/bin/bash
 
+# Create composer cache
+COMPOSER_PATH="/home/${USER}/.composer/"
+
+if [[ ! -d "${COMPOSER_PATH}" ]]
+then
+    mkdir "${COMPOSER_PATH}"
+fi
+
+cp auth.json "${COMPOSER_PATH}/auth.json"
+
 # Startup all containers
 docker-compose -f docker-compose.yml up -d
 [ "${?}" != 0 ] && echo "Failed to start docker containers" && exit 1

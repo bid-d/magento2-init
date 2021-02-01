@@ -8,7 +8,8 @@ mv developer/bin ./
 mv developer/.gitignore.example .gitignore
 mv developer/env/.env .
 mv developer/docker-compose.dev.yml docker-compose.yml
-# mv compose/.vscode ./
+mv developer/auth.json .
+# mv developer/.vscode ./
 rm -rf .git
 
 # Setup

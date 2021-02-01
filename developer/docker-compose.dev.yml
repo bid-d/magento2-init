@@ -9,8 +9,11 @@ services:
     image: biddd/php-fpm:7.3
     restart: always
     working_dir: /var/www/html/magento
+    env_file:
+      - .env
     volumes:
       - ./:/var/www/html/magento
+      - ${COMPOSER_PATH}:/home/magento/.composer
     expose:
       - "9000"
 
