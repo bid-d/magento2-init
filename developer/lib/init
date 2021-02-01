@@ -19,7 +19,7 @@ while getopts d:v: OPTION
 do
     case ${OPTION} in
         d)
-            DOMAIN="${OPTARG}"
+            BASE_URL="${OPTARG}"
             ;;
         v)
             VERSION="${OPTARG}"
