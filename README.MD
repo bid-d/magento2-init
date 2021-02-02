@@ -20,7 +20,8 @@
   - [License](#license)
     
 ## Docker Network
-<img src="https://raw.githubusercontent.com/bid-d/magento2-init/master/developer/docs/magento-network.png" alt="network image"><br />    
+<img src="https://raw.githubusercontent.com/bid-d/magento2-init/master/developer/docs/magento-network.png" alt="network image"/>
+
 ## Usage
 
 This configuration is used for setting up a full magento 2 local development.
