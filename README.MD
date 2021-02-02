@@ -9,6 +9,7 @@
 
 # Table of contents
 - [Table of contents](#table-of-contents)
+  - [Docker Network](#docker-network)
   - [Usage](#usage)
   - [Prerequisites](#prerequisites)
   - [Setup](#setup)
@@ -18,6 +19,8 @@
     - [Bid-d Nguyen](#bid-d-nguyen)
   - [License](#license)
     
+## Docker Network
+<img src="https://raw.githubusercontent.com/bid-d/magento2-init/master/developer/docs/magento-network.png" alt="network image"><br />    
 ## Usage
 
 This configuration is used for setting up a full magento 2 local development.
