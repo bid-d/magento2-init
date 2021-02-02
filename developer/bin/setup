@@ -46,6 +46,7 @@ CREATE USER '${MYSQL_USER}'@'%' IDENTIFIED BY '${MYSQL_PASSWORD}'; \
 GRANT ALL ON ${MYSQL_DATABASE}.* TO '${MYSQL_USER}'@'%';" > init.sql
 bin/clinottymysql mysql -u root < init.sql
 rm init.sql
+bin/clinottymysql rm /root/.my.cnf
 
 # Install magento2
 echo "Installing magento2 ..."
