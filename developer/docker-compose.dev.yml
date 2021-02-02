@@ -28,7 +28,7 @@ services:
 
   # DB Container using mysql
   mysql:
-    image: biddd/mysql:5.7
+    image: biddd/mysql:5.7.1
     restart: always
     command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
     volumes:

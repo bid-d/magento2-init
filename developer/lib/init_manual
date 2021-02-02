@@ -1,0 +1,13 @@
+#!/bin/bash
+
+mv developer/bin ./
+mv developer/.gitignore.example .gitignore
+mv developer/env/.env .
+mv developer/docker-compose.dev.yml docker-compose.yml
+mv developer/auth.json .
+# mv developer/.vscode ./
+
+# Setup
+source developer/env/magento.env
+source .env
+source bin/setup
