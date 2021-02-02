@@ -39,14 +39,15 @@ echo "127.0.0.1"$'\t'"$BASE_URL" | sudo tee -a /etc/hosts
 bin/clinottymysql echo "[mysql] "$'\n'"user = root "$'\n'"password = ${MYSQL_ROOT_PASSWORD}" > .my.cnf
 docker cp .my.cnf $(docker-compose ps -q mysql|awk '{print $1}'):/root/.my.cnf
 bin/clinottymysql chmod 600 /root/.my.cnf
-rm .my.cnf
+
 
 echo "CREATE DATABASE IF NOT EXISTS \`${MYSQL_DATABASE}\`;FLUSH PRIVILEGES; \
 CREATE USER '${MYSQL_USER}'@'%' IDENTIFIED BY '${MYSQL_PASSWORD}'; \
 GRANT ALL ON ${MYSQL_DATABASE}.* TO '${MYSQL_USER}'@'%';" > init.sql
 bin/clinottymysql mysql -u root < init.sql
 rm init.sql
-bin/clinottymysql rm /root/.my.cnf
+rm .my.cnf
+# bin/clinottymysql rm /root/.my.cnf
 
 # Install magento2
 echo "Installing magento2 ..."
@@ -58,7 +59,7 @@ bin/clinotty php bin/magento setup:install \
     --db-name=${MYSQL_DATABASE} \
     --db-user=${MYSQL_USER} \
     --db-password=${MYSQL_PASSWORD} \
-    --backend-frontname=admin \
+    --backend-frontname=${ADMIN_BACKEND} \
     --admin-firstname=${ADMIN_FIRSTNAME} \
     --admin-lastname=${ADMIN_LASTNAME} \
     --admin-email=${ADMIN_EMAIL} \

@@ -6,6 +6,7 @@ mv developer/env/.env .
 mv developer/docker-compose.dev.yml docker-compose.yml
 mv developer/auth.json .
 # mv developer/.vscode ./
+rm -rf .git
 
 # Setup
 source developer/env/magento.env

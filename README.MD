@@ -39,7 +39,7 @@ Folders:
 
 ## Setup
 
-You can either use [automated setup](#automated-setup) with default env values or [manual setup](#manual-setup) where you can defind your own env variable
+You can either use [automated setup](#automated-setup) with default env values or [manual setup](#manual-setup) where you can define your own env variable
 
 ### Automated Setup
 Run this command line from the directory you want to install the project
