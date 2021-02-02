@@ -47,7 +47,7 @@ GRANT ALL ON ${MYSQL_DATABASE}.* TO '${MYSQL_USER}'@'%';" > init.sql
 bin/clinottymysql mysql -u root < init.sql
 rm init.sql
 rm .my.cnf
-# bin/clinottymysql rm /root/.my.cnf
+bin/clinottymysql rm /root/.my.cnf
 
 # Install magento2
 echo "Installing magento2 ..."
