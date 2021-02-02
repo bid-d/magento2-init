@@ -16,7 +16,7 @@
     - [Automated Setup](#automated-setup)
     - [Manual Setup](#manual-setup)
   - [Credits](#credits)
-    - [Bid-d Nguyen](#bid-d-nguyen)
+    - [Bidd Nguyen](#bidd-nguyen)
   - [License](#license)
     
 ## Docker Network
@@ -68,11 +68,6 @@ ADMIN_PASSWORD=admin123
 ADMIN_FIRSTNAME=bidd
 ADMIN_LASTNAME=bidd
 ADMIN_EMAIL=bidd@admin.org
-
-REDIS_HOST=redis
-
-ELASTICSEARCH_HOST=elasticsearch
-ELASTICSEARCH_PORT=9200
 ```
 
 You can change the base url with `-d` flag and the version with `-v` flag:
@@ -88,10 +83,10 @@ foo@ubuntu:~$ git clone https://github.com/bid-d/magento2-init.git
 # CD to repository
 foo@ubuntu:~$ cd magento2-init
 
-# You nano or vim to edit env variables (I use vim in my case)
+# Use nano or vim to edit env variables (I use vim in my case)
 foo@ubuntu:~/magento2-init$ vim developer/env/magento.env
 
-# Edit and save, then edit MYSQL_ROOT_PASSWORD if you want to change this default value too. Do not touch the COMPOSER_PATH for caching
+# Edit and save, then edit MYSQL_ROOT_PASSWORD if you want to change this default value too
 foo@ubuntu:~/magento2-init$ vim developer/env/.env
 
 # Copy manual setup shell script to current directory
@@ -106,8 +101,8 @@ foo@ubuntu:~/magento2-init$ ./init_manual
 
 ## Credits
 
-### Bid-d Nguyen
-My name is Hung Nguyen and I'm the author of this repo. I've been PHP Web Developer (Laravel/Magento) and DevOps for more than three years. You can contact me directly at biddqb@gmail.com
+### Bidd Nguyen
+My name is Bidd Nguyen and I'm the author of this repo. I've been PHP Web Developer (Laravel/Magento) and DevOps for more than three years. You can contact me directly at biddqb@gmail.com
 
 ## License
 
