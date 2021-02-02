@@ -4,8 +4,6 @@ services:
   
   # Application container
   php:
-    build:
-      context: ./developer/images/php
     image: biddd/php-fpm:7.3
     restart: always
     working_dir: /var/www/html/magento
@@ -20,7 +18,7 @@ services:
   # Nginx container as Reverse proxy
   nginx:
     restart: always
-    image: nginx:1.19.6
+    image: biddd/nginx:1.19.6.1
     working_dir: /var/www/html/magento
     volumes:
       - ./:/var/www/html/magento
@@ -30,7 +28,7 @@ services:
 
   # DB Container using mysql
   mysql:
-    image: mysql:5.7
+    image: biddd/mysql:5.7
     restart: always
     command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
     volumes:
@@ -56,7 +54,7 @@ services:
       ADMINER_DESIGN: "pappu687"
 
   elasticsearch:
-    image: elasticsearch:6.8.13
+    image: biddd/elasticsearch:6.8.13
     ports:
       - "9200:9200"
     environment:
@@ -64,13 +62,13 @@ services:
 
   redis:
     restart: always
-    image: redis
+    image: biddd/redis:6.0.1
     expose:
       - "6379"
 
   varnish:
     restart: always
-    image: varnish:6
+    image: biddd/varnish:6.0.2
     volumes:
       - ./developer/images/varnish/default.vcl:/etc/varnish/default.vcl
     expose:
@@ -78,7 +76,7 @@ services:
 
   # Nginx container as SSL Termination
   proxy:
-    image: kflbidc123/nginx-alpine-ssl
+    image: biddd/nginx-ssl:1.0.0
     ports:
       - "80:80"
       - "443:443"
