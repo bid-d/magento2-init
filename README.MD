@@ -90,10 +90,10 @@ foo@ubuntu:~/magento2-init$ vim developer/env/magento.env
 foo@ubuntu:~/magento2-init$ vim developer/env/.env
 
 # Copy manual setup shell script to current directory
-foo@ubuntu:~/magento2-init$ cp developer/lib/init_manual .
+foo@ubuntu:~/magento2-init$ cp developer/lib/manual .
 
 # Execute the script
-foo@ubuntu:~/magento2-init$ ./init_manual
+foo@ubuntu:~/magento2-init$ ./manual
 
 # All done for manual installation, congrats!
 

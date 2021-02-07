@@ -80,5 +80,15 @@ services:
     ports:
       - "80:80"
       - "443:443"
+
+  # CLI tool for generating Magento 2 code
+  magsan:
+    user: "1000:1000"
+    image: biddd/magsan:latest
+    working_dir: /var/www/html/magento
+    volumes:
+      - ./:/var/www/html/magento
+    tty: true
+
 volumes:
   db_data:
