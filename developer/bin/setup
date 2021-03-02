@@ -1,0 +1,86 @@
+#!/bin/bash
+
+# Create composer cache
+COMPOSER_PATH="/home/${USER}/.composer/"
+
+if [[ ! -d "${COMPOSER_PATH}" ]]
+then
+    mkdir "${COMPOSER_PATH}"
+    mv auth.json "${COMPOSER_PATH}/auth.json"
+fi
+
+# Startup all containers
+docker-compose -f docker-compose.yml up -d
+[ "${?}" != 0 ] && echo "Failed to start docker containers" && exit 1
+sleep 20 # Wait for all containers to start
+
+# Setup permission
+echo "Setting up permission ..."
+rm -rf generated/code
+rm -rf var/cache
+rm -rf var/page_cache
+
+bin/clinottyroot chmod u+x bin/magento
+bin/clinottyroot find var generated vendor pub/static pub/media app/etc -type f -exec chmod g+w {} + \
+    && find var generated vendor pub/static pub/media app/etc -type d -exec chmod g+ws {} +
+bin/clinottyroot chown -R magento:www-data $(ls -Ideveloper -Ibin)
+
+# Add root user to container so that we can call command without having to login
+echo "Setting up mysql ..."
+echo "[mysql] "$'\n'"user = root "$'\n'"password = ${MYSQL_ROOT_PASSWORD}" > .my.cnf
+# echo "[mysql] "$'\n'"user = ${MYSQL_USER} "$'\n'"password = ${MYSQL_PASSWORD}" >> .my.cnf
+docker cp .my.cnf $(docker-compose ps -q mysql|awk '{print $1}'):/root/.my.cnf
+bin/clinottymysql chmod 600 /root/.my.cnf
+
+# Init DB
+echo "CREATE DATABASE IF NOT EXISTS \`${MYSQL_DATABASE}\`;FLUSH PRIVILEGES; \
+CREATE USER '${MYSQL_USER}'@'%' IDENTIFIED BY '${MYSQL_PASSWORD}'; \
+GRANT ALL ON ${MYSQL_DATABASE}.* TO '${MYSQL_USER}'@'%';" > developer/data/mysql/init/init.sql
+bin/clinottymysql mysql -u root < developer/data/mysql/init/init.sql
+bin/clinottymysql mysql -u root ${MYSQL_DATABASE} < developer/data/mysql/init/devjajum_demo_marketplace.sql
+
+
+# Create env.php and config file
+echo "Configuring ..."
+sed -e "s/\${dbname}/${MYSQL_DATABASE}/" -e "s/\${username}/${MYSQL_USER}/" -e "s/\${password}/${MYSQL_PASSWORD}/" env.php.example > app/etc/env.php
+cp config.php.example app/etc/config.php
+
+# Add baseurl to hosts file
+echo "Your system password has been requested to add an entry to /etc/hosts..."
+echo "127.0.0.1"$'\t'"$BASE_URL" | sudo tee -a /etc/hosts
+
+echo "Cleaning files ..."
+rm .my.cnf env.php.example config.php.example LICENSE.md
+rm -rf developer/data
+rm -rf developer/lib
+
+echo "Upgrading ..."
+bin/clinotty bin/magento set:up
+
+# Config base url and redis cache
+echo "Configuring base url and redis cache ..."
+bin/clinotty bin/magento config:set web/unsecure/base_url https://${BASE_URL}/
+bin/clinotty bin/magento config:set web/secure/base_url https://${BASE_URL}/
+bin/clinotty bin/magento config:set web/secure/base_link_url https://${BASE_URL}/
+bin/clinotty bin/magento setup:config:set --cache-backend=redis --cache-backend-redis-server=${REDIS_HOST} --cache-backend-redis-db=0
+bin/clinotty bin/magento setup:config:set --page-cache=redis --page-cache-redis-server=${REDIS_HOST} --page-cache-redis-db=1
+bin/clinotty bin/magento setup:config:set --session-save=redis --session-save-redis-host=${REDIS_HOST} --session-save-redis-log-level=4 --session-save-redis-db=2
+
+echo "Turning on developer mode ..."
+bin/clinotty bin/magento deploy:mode:set developer
+
+bin/clinotty bin/magento indexer:reindex
+
+echo "Deploying static content ..."
+bin/clinotty bin/magento setup:static-content:deploy -f
+
+echo "Re-indexing with Elasticsearch ..."
+bin/clinotty bin/magento indexer:reindex
+
+echo "Flushing cache ..."
+bin/clinotty bin/magento cache:flush
+
+echo "Your local environment setup complete"
+echo "Please visit your site at https://${BASE_URL}/"
+
+

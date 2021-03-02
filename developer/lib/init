@@ -1,0 +1,13 @@
+#!/bin/bash
+
+git init -qqq
+git remote add origin https://github.com/bid-d/magento2-init.git
+git fetch origin -qqq
+git checkout origin/arrowhitech -- developer
+mv -R developer/bin ./
+mv developer/env/.env .
+mv developer/docker-compose.dev.yml docker-compose.yml
+mv developer/auth.json .
+mv developer/env.php.example .
+mv developer/config.php.example .
+rm -rf .git

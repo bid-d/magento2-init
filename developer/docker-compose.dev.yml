@@ -1,0 +1,95 @@
+version: "3"
+
+services:
+  
+  # Application container
+  php:
+    image: biddd/php-fpm:7.2
+    restart: always
+    working_dir: /var/www/html/magento
+    env_file:
+      - .env
+    volumes:
+      - ./:/var/www/html/magento
+      - ${COMPOSER_PATH}:/home/magento/.composer
+    expose:
+      - "9000"
+
+  # Nginx container as Reverse proxy
+  nginx:
+    restart: always
+    image: biddd/nginx:1.19.6.1
+    working_dir: /var/www/html/magento
+    volumes:
+      - ./:/var/www/html/magento
+      - ./developer/images/nginx/magento.conf:/etc/nginx/conf.d/default.conf
+    expose:
+      - "80"
+
+  # DB Container using mysql
+  mysql:
+    image: biddd/mysql:5.7.1
+    restart: always
+    command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    volumes:
+      - db_data_v3:/var/lib/mysql
+      - ./developer/data/mysql/init:/docker-entrypoint-initdb.d
+    env_file:
+      - .env
+    environment: 
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+    expose:
+      - "3306"
+  
+  adminer:
+    restart: always
+    image: adminer
+    volumes:
+      - ./developer/images/adminer/php-custom.ini:/usr/local/etc/php/conf.d/php-custom.ini
+    expose:
+      - "8080"
+    ports:
+      - "8088:8080"
+    environment:
+      ADMINER_DEFAULT_SERVER: mysql
+      ADMINER_DESIGN: "pappu687"
+
+  elasticsearch:
+    image: biddd/elasticsearch:6.8.13
+    ports:
+      - "9200:9200"
+    environment:
+      - discovery.type=single-node
+
+  redis:
+    restart: always
+    image: biddd/redis:6.0.1
+    expose:
+      - "6379"
+
+  varnish:
+    restart: always
+    image: biddd/varnish:6.0.2
+    volumes:
+      - ./developer/images/varnish/default.vcl:/etc/varnish/default.vcl
+    expose:
+      - "80"
+
+  # Nginx container as SSL Termination
+  proxy:
+    image: biddd/nginx-ssl:1.0.0
+    ports:
+      - "80:80"
+      - "443:443"
+
+  # CLI tool for generating Magento 2 code
+  magsan:
+    user: "1000:1000"
+    image: biddd/magsan:latest
+    working_dir: /var/www/html/magento
+    volumes:
+      - ./:/var/www/html/magento
+    tty: true
+
+volumes:
+  db_data_v3:
