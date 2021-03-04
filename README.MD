@@ -71,7 +71,7 @@ BASE_URL=magento2.local
 MYSQL_ROOT_PASSWORD=root
 ```
 
-- Setup your magento site:
+- Setup your magento site, please be aware that it will prompt you for sudo password during installation to add `BASE_URL` to `/etc/hosts` file:
 ```bash
 
 # Replace git@your_repo with your repo
