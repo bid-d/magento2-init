@@ -74,19 +74,27 @@ MYSQL_ROOT_PASSWORD=root
 - Setup your magento site:
 ```bash
 
-#Replace git@your_repo with your repo
+# Replace git@your_repo with your repo
+# Eg: git init -q && git remote add origin git@bitbucket.org:jajuma/jajuma-market-v2.git
 foo@ubuntu:~$ git init -q && git remote add origin git@your_repo
 
-#Replace your_branch with your branch
+# Replace your_branch with your branch
+# Eg: git pull origin test-oowv-test && git checkout test-oowv-test
 foo@ubuntu:~$ git pull origin your_branch && git checkout your_branch
 
-#Replace your_db.sql with your sql file
+# Replace your_db.sql with your sql file
+# Important Note: Your db file have to be renamed to db.sql otherwise the setup will fail
+# Eg: cp ~/Documents/devjajuma_oowv_stage.sql developer/data/mysql/init/db.sql
 foo@ubuntu:~$ cp ~/Your/DB/Path/your_db.sql developer/data/mysql/init/db.sql
 
 foo@ubuntu:~$ cp developer/lib/init .
 
 foo@ubuntu:~$ ./init
-
+```
+- Depend on the system, it will typically take about 5-10 minutes to complete the installation. And depend on each project, you might need to do some post-installation actions to make the website live up. If the installation succeed, you will see the message eventually:
+```bash
+Your local environment setup complete
+Please visit your site at https://magento2.local/
 ```
 
 ## Credits

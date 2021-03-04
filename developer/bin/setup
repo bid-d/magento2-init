@@ -54,6 +54,9 @@ rm .my.cnf env.php.example config.php.example README.MD
 rm developer/data/mysql/init/db.sql
 rm -rf developer/lib developer/docs
 
+echo "Turning on default mode ..."
+bin/clinotty bin/magento deploy:mode:set default
+
 echo "Upgrading ..."
 bin/clinotty bin/magento set:up
 
