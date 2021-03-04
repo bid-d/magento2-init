@@ -50,9 +50,9 @@ echo "Your system password has been requested to add an entry to /etc/hosts..."
 echo "127.0.0.1"$'\t'"$BASE_URL" | sudo tee -a /etc/hosts
 
 echo "Cleaning files ..."
-rm .my.cnf env.php.example config.php.example
+rm .my.cnf env.php.example config.php.example README.MD
 rm developer/data/mysql/init/db.sql
-rm -rf developer/lib
+rm -rf developer/lib developer/docs
 
 echo "Upgrading ..."
 bin/clinotty bin/magento set:up
@@ -86,4 +86,6 @@ bin/clinotty bin/magento set:di:compile
 echo "Your local environment setup complete"
 echo "Please visit your site at https://${BASE_URL}/"
 
+# Clear Init file
+rm -- "$0"
 

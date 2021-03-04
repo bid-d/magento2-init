@@ -48,11 +48,15 @@ Folders:
 
 - In your project directory, run this to initialize required files:
 ```bash
-foo@ubuntu:~$ curl -s https://raw.githubusercontent.com/bid-d/magento2-init/arrowhitech/developer/lib/init | bash -s
+foo@ubuntu:~$ git init -q && \
+  git remote add origin git@github.com:bid-d/magento2-init.git && \
+  git pull origin arrowhitech && \
+  git checkout arrowhitech && \
+  rm -rf .git/
 ```
 - You can edit ENV configuration file for your local setup:
 
-`/env/magento.env` file
+`/developer/env/magento.env` file
 ```env
 MYSQL_DATABASE=magentodb
 MYSQL_USER=bidd
@@ -62,17 +66,27 @@ BASE_URL=magento2.local
 ```
 - You can also change the default Mysql root password.
 
-`.env` file
+`/developer/env/.env` file
 ```env
 MYSQL_ROOT_PASSWORD=root
 ```
-- Clone your repo in to the current directory
-```bash
-git clone git@yourrepo.link
-```
+
 - Setup your magento site:
 ```bash
-foo@ubuntu:~$ curl -s https://raw.githubusercontent.com/bid-d/magento2-init/arrowhitech/developer/lib/setup | bash -s
+
+#Replace git@your_repo with your repo
+foo@ubuntu:~$ git init -q && git remote add origin git@your_repo
+
+#Replace your_branch with your branch
+foo@ubuntu:~$ git pull origin your_branch && git checkout your_branch
+
+#Replace your_db.sql with your sql file
+foo@ubuntu:~$ cp ~/Your/DB/Path/your_db.sql developer/data/mysql/init/db.sql
+
+foo@ubuntu:~$ cp developer/lib/init .
+
+foo@ubuntu:~$ ./init
+
 ```
 
 ## Credits
