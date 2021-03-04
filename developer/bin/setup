@@ -16,9 +16,9 @@ sleep 20 # Wait for all containers to start
 
 # Setup permission
 echo "Setting up permission ..."
-rm -rf generated/code
-rm -rf var/cache
-rm -rf var/page_cache
+[ -d "generated/code" ] && rm -rf generated/code
+[ -d "var/cache" ] && rm -rf var/cache
+[ -d "var/page_cache" ] &&  rm -rf var/page_cache
 
 bin/clinottyroot chmod u+x bin/magento
 bin/clinottyroot find var generated vendor pub/static pub/media app/etc -type f -exec chmod g+w {} + \
@@ -37,7 +37,7 @@ echo "CREATE DATABASE IF NOT EXISTS \`${MYSQL_DATABASE}\`;FLUSH PRIVILEGES; \
 CREATE USER '${MYSQL_USER}'@'%' IDENTIFIED BY '${MYSQL_PASSWORD}'; \
 GRANT ALL ON ${MYSQL_DATABASE}.* TO '${MYSQL_USER}'@'%';" > developer/data/mysql/init/init.sql
 bin/clinottymysql mysql -u root < developer/data/mysql/init/init.sql
-bin/clinottymysql mysql -u root ${MYSQL_DATABASE} < developer/data/mysql/init/devjajum_demo_marketplace.sql
+bin/clinottymysql mysql -u root ${MYSQL_DATABASE} < developer/data/mysql/init/db.sql
 
 
 # Create env.php and config file
@@ -50,8 +50,8 @@ echo "Your system password has been requested to add an entry to /etc/hosts..."
 echo "127.0.0.1"$'\t'"$BASE_URL" | sudo tee -a /etc/hosts
 
 echo "Cleaning files ..."
-rm .my.cnf env.php.example config.php.example LICENSE.md
-rm -rf developer/data
+rm .my.cnf env.php.example config.php.example
+rm developer/data/mysql/init/db.sql
 rm -rf developer/lib
 
 echo "Upgrading ..."
@@ -79,6 +79,9 @@ bin/clinotty bin/magento indexer:reindex
 
 echo "Flushing cache ..."
 bin/clinotty bin/magento cache:flush
+
+echo "DI Compiling ..."
+bin/clinotty bin/magento set:di:compile
 
 echo "Your local environment setup complete"
 echo "Please visit your site at https://${BASE_URL}/"

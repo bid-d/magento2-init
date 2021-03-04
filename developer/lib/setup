@@ -1,6 +1,0 @@
-#!/bin/bash
-
-# Setup
-source developer/env/magento.env
-source .env
-source bin/setup
